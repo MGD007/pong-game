@@ -23,16 +23,34 @@
     }
 
     .score {
-      position: absolute;
-      top: 20px;
-      font-size: 24px;
-      letter-spacing: 2px;
-    }
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+.controls {
+  position: absolute;
+  top: 55px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  line-height: 1.6;
+}
   </style>
 </head>
 <body>
 
 <div class="score" id="score">0 : 0</div>
+<div class="score" id="score">0 : 0</div>
+<div class="controls">
+  W → move up<br>
+  S → move down
+</div>  
 <canvas id="game" width="800" height="500"></canvas>
 
 <script>
