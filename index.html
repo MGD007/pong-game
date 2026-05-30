@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pong Game</title>
+  <title>Pong by atomicat</title>
   <style>
     body {
       margin: 0;
@@ -13,20 +13,32 @@
       align-items: center;
       height: 100vh;
       overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: white;
     }
 
     canvas {
       background: #000;
-      border: 2px solid #fff;
+      border: 2px solid white;
+    }
+
+    .score {
+      position: absolute;
+      top: 20px;
+      font-size: 24px;
+      letter-spacing: 2px;
     }
   </style>
 </head>
 <body>
+
+<div class="score" id="score">0 : 0</div>
 <canvas id="game" width="800" height="500"></canvas>
 
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+const scoreDisplay = document.getElementById("score");
 
 // Paddles
 const paddleWidth = 10, paddleHeight = 100;
@@ -34,7 +46,7 @@ const paddleWidth = 10, paddleHeight = 100;
 let leftPaddle = {
   x: 10,
   y: canvas.height / 2 - paddleHeight / 2,
-  speed: 6
+  speed: 7
 };
 
 let rightPaddle = {
@@ -52,15 +64,28 @@ let ball = {
   speedY: 3
 };
 
+// Score
+let scoreLeft = 0;
+let scoreRight = 0;
+
 // Controls
 let keys = {};
 
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => keys[e.key] = false);
+document.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+document.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+// Reset ball after score
+function resetBall(direction) {
+  ball.x = canvas.width / 2;
+  ball.y = canvas.height / 2;
+
+  ball.speedX = 5 * direction;
+  ball.speedY = (Math.random() * 6 - 3);
+}
 
 // Move paddles
 function movePaddles() {
-  // Left paddle (W/S)
+  // Player (W/S)
   if (keys["w"] && leftPaddle.y > 0) {
     leftPaddle.y -= leftPaddle.speed;
   }
@@ -68,12 +93,12 @@ function movePaddles() {
     leftPaddle.y += leftPaddle.speed;
   }
 
-  // Right paddle (AI simple)
+  // AI
   let target = ball.y - paddleHeight / 2;
-  rightPaddle.y += (target - rightPaddle.y) * 0.07;
+  rightPaddle.y += (target - rightPaddle.y) * 0.08;
 }
 
-// Ball movement
+// Ball physics
 function moveBall() {
   ball.x += ball.speedX;
   ball.y += ball.speedY;
@@ -101,19 +126,31 @@ function moveBall() {
     ball.speedX *= -1;
   }
 
-  // Reset if out
-  if (ball.x < 0 || ball.x > canvas.width) {
-    ball.x = canvas.width / 2;
-    ball.y = canvas.height / 2;
-    ball.speedX *= -1;
+  // SCORE RIGHT (AI gets point)
+  if (ball.x < 0) {
+    scoreRight++;
+    updateScore();
+    resetBall(1);
   }
+
+  // SCORE LEFT (player gets point)
+  if (ball.x > canvas.width) {
+    scoreLeft++;
+    updateScore();
+    resetBall(-1);
+  }
+}
+
+// Update score display
+function updateScore() {
+  scoreDisplay.textContent = `${scoreLeft} : ${scoreRight}`;
 }
 
 // Draw everything
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Middle line
+  // Center dashed line
   ctx.fillStyle = "#333";
   for (let i = 0; i < canvas.height; i += 20) {
     ctx.fillRect(canvas.width / 2 - 1, i, 2, 10);
@@ -140,5 +177,8 @@ function update() {
 
 update();
 </script>
+
 </body>
 </html>
+🏆 What’s new
+Real Pong scoring system (0 : 0 style)
